@@ -1,4 +1,4 @@
-module github.com/ehsandavari/golang-graceful-shutdown
+module github.com/ehsandavari/go-graceful-shutdown
 
 go 1.20
 

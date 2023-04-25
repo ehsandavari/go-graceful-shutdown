@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/ehsandavari/golang-graceful-shutdown/graceful"
-	"github.com/ehsandavari/golang-graceful-shutdown/proto"
+	"github.com/ehsandavari/go-graceful-shutdown/graceful"
+	"github.com/ehsandavari/go-graceful-shutdown/proto"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"

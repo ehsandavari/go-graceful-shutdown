@@ -48,7 +48,7 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 		shutdownFunc()
 	}
 
-	// Set a deadline for graceful shutdown
+	// Set a deadline for examples shutdown
 	ctx, timeoutCancel := context.WithTimeout(ctx, gracePeriod)
 	defer timeoutCancel()
 

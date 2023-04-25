@@ -23,9 +23,6 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-
-		// Run your application here
-		// Example:
 		log.Println("Application started")
 		select {
 		case <-ctx.Done():

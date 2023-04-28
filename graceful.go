@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-// Graceful can gracefully shut down a Go application and run a function for additional cleanup tasks.
-func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
+// Shutdown can gracefully shut down a Go application and run a function for additional cleanup tasks.
+func Shutdown(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 	// Use a WaitGroup to track active goroutines
 	var wg sync.WaitGroup
 
@@ -38,15 +38,15 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 	// Signal the context to cancel
 	cancel()
 
+	// Set a deadline for shutdown
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), gracePeriod)
+	defer shutdownCancel()
+
 	// Run the shutdown function, if provided
 	if shutdownFunc != nil {
 		log.Println("Run the shutdown function...")
-		shutdownFunc()
+		shutdownFuncWithTimeout(shutdownCtx, shutdownFunc)
 	}
-
-	// Set a deadline for shutdown
-	ctx, timeoutCancel := context.WithTimeout(ctx, gracePeriod)
-	defer timeoutCancel()
 
 	// Wait for all goroutines to finish
 	wg.Wait()
@@ -58,4 +58,20 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 	}
 
 	log.Println("Application stopped gracefully")
+}
+
+func shutdownFuncWithTimeout(ctx context.Context, shutdownFunc func()) {
+	doneCh := make(chan struct{})
+	go func() {
+		defer close(doneCh)
+		shutdownFunc()
+	}()
+	select {
+	case <-doneCh:
+		// Shutdown function completed successfully
+		log.Println("Shutdown function completed successfully")
+	case <-ctx.Done():
+		// Shutdown function took too long to complete
+		log.Println("Shutdown function timed out")
+	}
 }

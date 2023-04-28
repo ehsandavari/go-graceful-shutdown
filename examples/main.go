@@ -16,7 +16,7 @@ import (
 func startHTTPServer() *http.Server {
 	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
-		time.Sleep(4 * time.Second)
+		time.Sleep(20 * time.Second)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Hello, world!",
 		})
@@ -84,6 +84,6 @@ func main() {
 	cleanupFunc := func() {
 		log.Println("Cleaning up...")
 	}
-	// Call Graceful function with cleanup and shutdown functions
-	graceful.Graceful(shutdownFunc, cleanupFunc, 10*time.Second)
+	// Call Shutdown function with cleanup and shutdown functions
+	graceful.Shutdown(shutdownFunc, cleanupFunc, 10*time.Second)
 }

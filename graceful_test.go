@@ -1,12 +1,13 @@
 package graceful
 
 import (
+	"context"
 	"syscall"
 	"testing"
 	"time"
 )
 
-func TestGraceful(t *testing.T) {
+func TestGracefulShutdown(t *testing.T) {
 	// Set up a mock application
 	var shutdownCalled bool
 	var cleanupCalled bool
@@ -30,11 +31,11 @@ func TestGraceful(t *testing.T) {
 	}
 
 	go func() {
-		Graceful(shutdownFunc, cleanupFunc, 10*time.Second)
+		Shutdown(shutdownFunc, cleanupFunc, 10*time.Second)
 	}()
 
 	// Wait for a short period of time before starting the mock application
-	// to make sure the Graceful function is running before the application starts
+	// to make sure the Shutdown function is running before the application starts
 	time.Sleep(time.Millisecond * 500)
 
 	go func() {
@@ -67,5 +68,26 @@ func TestGraceful(t *testing.T) {
 	}
 	if !cleanupCalled {
 		t.Errorf("Cleanup function was not called")
+	}
+}
+
+func TestShutdownFuncWithTimeout(t *testing.T) {
+	// Create a context with a short deadline
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	// Create a mock shutdown function
+	var shutdownCalled bool
+	shutdownFunc := func() {
+		shutdownCalled = true
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	// Call the shutdownFuncWithTimeout function with the mock shutdown function
+	shutdownFuncWithTimeout(ctx, shutdownFunc)
+
+	// Check that the shutdown function was called
+	if !shutdownCalled {
+		t.Error("Shutdown function was not called")
 	}
 }

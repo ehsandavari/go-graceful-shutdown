@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// TestGraceful tests the Graceful function.
 func TestGraceful(t *testing.T) {
 	// Set up a mock application
 	var shutdownCalled bool
@@ -30,7 +29,6 @@ func TestGraceful(t *testing.T) {
 		}
 	}
 
-	// Run the test
 	go func() {
 		Graceful(shutdownFunc, cleanupFunc, 10*time.Second)
 	}()

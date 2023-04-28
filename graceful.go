@@ -19,14 +19,12 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Start the main goroutine
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		log.Println("Application started")
 		select {
 		case <-ctx.Done():
-			// The context was canceled
 			log.Println("Application stopped gracefully")
 			return
 		}
@@ -42,10 +40,11 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 
 	// Run the shutdown function, if provided
 	if shutdownFunc != nil {
+		log.Println("Run the shutdown function...")
 		shutdownFunc()
 	}
 
-	// Set a deadline for examples shutdown
+	// Set a deadline for shutdown
 	ctx, timeoutCancel := context.WithTimeout(ctx, gracePeriod)
 	defer timeoutCancel()
 
@@ -54,9 +53,9 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 
 	// Run the cleanup function, if provided
 	if cleanupFunc != nil {
+		log.Println("Run the cleanup function...")
 		cleanupFunc()
 	}
 
-	// Log that the application has stopped
 	log.Println("Application stopped gracefully")
 }

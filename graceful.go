@@ -25,7 +25,7 @@ func Graceful(shutdownFunc, cleanupFunc func(), gracePeriod time.Duration) {
 		log.Println("Application started")
 		select {
 		case <-ctx.Done():
-			log.Println("Application stopped gracefully")
+			log.Println("Application context is done")
 			return
 		}
 	}()

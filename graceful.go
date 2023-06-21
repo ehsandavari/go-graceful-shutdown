@@ -11,7 +11,7 @@ import (
 )
 
 // Shutdown can gracefully shut down a Go application and run a function for additional cleanup tasks.
-func Shutdown(shutdownFunc, cleanupFunc func(), gracePeriod byte) {
+func Shutdown(shutdownFunc, cleanupFunc func(), gracePeriodSecond byte) {
 	// Use a WaitGroup to track active goroutines
 	var wg sync.WaitGroup
 
@@ -39,7 +39,7 @@ func Shutdown(shutdownFunc, cleanupFunc func(), gracePeriod byte) {
 	cancel()
 
 	// Set a deadline for shutdown
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), time.Duration(gracePeriod)*time.Second)
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), time.Duration(gracePeriodSecond)*time.Second)
 	defer shutdownCancel()
 
 	// Run the shutdown function, if provided
